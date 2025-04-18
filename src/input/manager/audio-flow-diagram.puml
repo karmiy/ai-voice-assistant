@@ -1,0 +1,82 @@
+@startuml Audio Processing Flow
+
+class MediaStream {
+    + getTracks()
+    + getAudioTracks()
+    + getUserMedia()
+}
+
+class MicrophoneStream {
+    + setStream()
+    + pipe()
+    + unpipe()
+    + destroy()
+}
+
+class AudioStreamer {
+    + process()
+    + on()
+}
+
+class KaldiRecognizer {
+    + acceptWaveform()
+    + setWords()
+    + on()
+}
+
+class AudioBucket {
+    + write()
+    + end()
+}
+
+note "1. 用户授权麦克风访问" as N1
+note "2. 获取原始音频流" as N2
+note "3. 处理音频数据" as N3
+note "4. 识别或丢弃" as N4
+
+N1 --> MediaStream
+MediaStream --> N2
+N2 --> MicrophoneStream
+MicrophoneStream --> N3
+N3 --> AudioStreamer : 识别状态
+N3 --> AudioBucket : 暂停状态
+AudioStreamer --> KaldiRecognizer
+KaldiRecognizer --> N4 : 识别结果
+AudioBucket --> N4 : 丢弃数据
+
+note right of MediaStream
+  MediaStream:
+  - 获取麦克风权限
+  - 提供原始音频流
+  - 控制音频参数（采样率等）
+end note
+
+note right of MicrophoneStream
+  MicrophoneStream:
+  - 处理原始音频数据
+  - 提供流式处理接口
+  - 控制数据流向
+end note
+
+note right of AudioStreamer
+  AudioStreamer:
+  - 处理音频数据格式
+  - 准备数据供识别器使用
+  - 管理识别状态
+end note
+
+note right of KaldiRecognizer
+  KaldiRecognizer:
+  - 执行语音识别
+  - 提供识别结果
+  - 管理识别状态
+end note
+
+note right of AudioBucket
+  AudioBucket:
+  - 接收暂停时的音频数据
+  - 防止数据丢失
+  - 提供数据缓冲
+end note
+
+@enduml 

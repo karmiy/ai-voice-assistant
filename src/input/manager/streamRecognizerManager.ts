@@ -1,19 +1,19 @@
 import {
   RecognizerStreamer,
   RecognizerModel,
-  RecognizerManagerOptions,
+  RecognizerModelOptions,
 } from '../utils';
-import { micAudioManager } from './micAudioManager';
+import { micStreamProcessor } from '../../shared';
 import { SUPPORTED_LANGUAGES } from '../constants';
 import context from '../../context';
 
-const logger = context.logger.tags('[RecognizerManager]');
+const logger = context.logger.tags('[StreamRecognizerManager]');
 
-type RecognizerOptions = RecognizerManagerOptions & {
+type RecognizerOptions = RecognizerModelOptions & {
   language: SUPPORTED_LANGUAGES;
 };
 
-class RecognizerManager {
+class StreamRecognizerManager {
   private _streamers = new Map<SUPPORTED_LANGUAGES, RecognizerStreamer>();
   private _subscribers = new Map<SUPPORTED_LANGUAGES, Set<RecognizerOptions>>();
 
@@ -42,10 +42,10 @@ class RecognizerManager {
         });
       },
       onPartialResult: (partial: string) => {
-        logger.info('Recognizer partial result', {
-          partial,
-          language,
-        });
+        // logger.info('Recognizer partial result', {
+        //   partial,
+        //   language,
+        // });
         this._subscribers.get(language)?.forEach((subscriber) => {
           subscriber.onPartialResult?.(partial);
         });
@@ -58,7 +58,7 @@ class RecognizerManager {
     const streamer = new RecognizerStreamer(recognizer, {
       objectMode: true,
     });
-    micAudioManager.registerWriter(streamer);
+    micStreamProcessor.subscribe(streamer);
     this._streamers.set(language, streamer);
     return streamer;
   }
@@ -73,7 +73,7 @@ class RecognizerManager {
       return () => {
         subscribers.delete(options);
         if (!subscribers.size) {
-          micAudioManager.unregisterWriter(streamer);
+          micStreamProcessor.unsubscribe(streamer);
           this._streamers.delete(language);
         }
       };
@@ -88,4 +88,4 @@ class RecognizerManager {
   }
 }
 
-export const recognizerManager = new RecognizerManager();
+export const streamRecognizerManager = new StreamRecognizerManager();

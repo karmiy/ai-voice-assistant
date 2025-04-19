@@ -1,2 +1,2 @@
-export * from './recognizerManager';
-export * from './micAudioManager';
+export * from './streamRecognizerManager';
+export * from './voiceRecognizerManager';

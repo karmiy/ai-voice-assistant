@@ -1,24 +1,25 @@
 import MicrophoneStream from 'microphone-stream';
 import './polyfill';
-import context from '../../context';
+import context from '../context';
 
-const logger = context.logger.tags('[MicAudioManager]');
+const logger = context.logger.tags('[MicStreamProcessor]');
 
-export interface MicAudioManagerOptions {
+export interface MicStreamProcessorOptions {
   onError?: (error: Error) => void;
 }
 
 type WritableStream = NodeJS.WritableStream | _Readable.Writable;
 
-class MicAudioManager {
+class MicStreamProcessor {
   private _mediaStream: MediaStream | null = null;
   private _micStream: MicrophoneStream | null = null;
   private _writers = new Set<WritableStream>();
 
-  constructor(private _options: MicAudioManagerOptions = {}) {}
+  constructor(private _options: MicStreamProcessorOptions = {}) {}
 
-  async load() {
+  private async _load() {
     try {
+      logger.info('load');
       // If microphone stream already exists, reset pipes
       if (this._micStream) {
         this._resetPipes();
@@ -61,23 +62,29 @@ class MicAudioManager {
     });
   }
 
-  registerWriter(writer: WritableStream) {
+  async subscribe(writer: WritableStream) {
     if (this._writers.has(writer)) {
       return;
     }
     this._writers.add(writer);
+    if (this._writers.size === 1) {
+      await this._load();
+    }
     this._micStream?.pipe(writer);
   }
 
-  unregisterWriter(writer: WritableStream) {
+  unsubscribe(writer: WritableStream) {
     if (!this._writers.has(writer)) {
       return;
     }
     this._writers.delete(writer);
     this._micStream?.unpipe(writer);
+    if (this._writers.size === 0) {
+      this._unload();
+    }
   }
 
-  unload() {
+  private _unload() {
     this._resetPipes();
     this._micStream?.destroy();
     this._micStream = null;
@@ -87,7 +94,7 @@ class MicAudioManager {
   }
 }
 
-export const micAudioManager = new MicAudioManager({
+export const micStreamProcessor = new MicStreamProcessor({
   onError: (error) => {
     logger.error(error.message);
   },

@@ -50,7 +50,7 @@ export interface ServerMessagePartialResult {
   };
 }
 
-export interface RecognizerManagerOptions {
+export interface RecognizerModelOptions {
   onError?: (error: Error) => void;
   onResult?: (result: Result) => void; // 一段话结束了触发
   onPartialResult?: (partial: string) => void; // 实时触发，即使没文本
@@ -66,7 +66,7 @@ export class RecognizerModel {
   private _currentRecognizer: KaldiRecognizer | null = null;
   private _currentLanguage: SUPPORTED_LANGUAGES | null = null;
 
-  constructor(private _options: RecognizerManagerOptions = {}) {}
+  constructor(private _options: RecognizerModelOptions = {}) {}
 
   private _handleResult = (message: RecognizerMessage) => {
     if (message.event === 'result') {

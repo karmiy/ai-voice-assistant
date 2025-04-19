@@ -1,0 +1,81 @@
+@startuml 语音识别流程
+
+' 组件和数据流
+package "浏览器音频捕获" {
+  [麦克风硬件] as Mic
+  [浏览器API] as BrowserAPI
+  note bottom of BrowserAPI
+    获取麦克风权限和原始音频数据
+  end note
+}
+
+package "音频流处理层" {
+  [MicStreamProcessor] as MSP
+  [MicrophoneStream] as MicStream
+  
+  note bottom of MSP
+    1. 申请麦克风权限
+    2. 管理音频流生命周期
+    3. 向订阅者分发音频数据
+  end note
+  
+  note bottom of MicStream
+    1. 处理原始音频数据
+    2. 转换为合适的格式
+    3. 提供流式数据接口
+  end note
+}
+
+package "语音识别层" {
+  [RecognizerStreamer] as RS
+  [KaldiRecognizer] as KR
+  [RecognizerModel] as RM
+  
+  note bottom of RS
+    1. 接收音频流数据
+    2. 处理音频数据格式
+    3. 传递给语音识别引擎
+  end note
+  
+  note bottom of KR
+    1. Vosk语音识别核心引擎
+    2. 处理音频数据
+    3. 生成识别结果
+  end note
+  
+  note bottom of RM
+    1. 管理语音模型
+    2. 创建和配置识别器
+    3. 处理识别结果
+    4. 通过回调返回结果
+  end note
+}
+
+' 数据流向
+Mic --> BrowserAPI : 提供原始音频信号
+BrowserAPI --> MSP : 提供MediaStream
+
+MSP --> MicStream : 1.创建并配置\n2.传入MediaStream
+MicStream --> MSP : 提供处理后的音频流
+
+MSP --> RS : 传送音频数据
+RS --> KR : 传递音频数据进行识别
+KR --> RM : 返回识别结果
+
+RM ..> RS : 创建时提供KaldiRecognizer实例
+RM --> [应用程序] : 返回识别结果
+
+' 主要关系解释
+note "MicStreamProcessor在初始化时:\n1. 请求麦克风权限\n2. 创建MicrophoneStream实例\n3. 配置音频参数" as Note1
+MSP .. Note1
+Note1 .. MicStream
+
+note "当应用需要语音识别时:\n1. 先通过RecognizerModel加载模型\n2. 创建RecognizerStreamer\n3. 订阅MicStreamProcessor的音频流" as Note2
+RS .. Note2
+Note2 .. RM
+
+note "数据处理流程:\n原始音频 → MediaStream → MicrophoneStream → \nRecognizerStreamer → KaldiRecognizer → 识别结果" as Note3
+MSP .. Note3
+Note3 .. RS
+
+@enduml

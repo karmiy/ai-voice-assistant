@@ -6,6 +6,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@picovoice/porcupine-web": "3.0.3",
+    "@picovoice/web-voice-processor": "^4.0.9",
     "@types/node": "^18.7.15",
     "@types/react": "^18.0.18",
     "@types/react-dom": "^18.0.6",
@@ -20,7 +21,7 @@
     "vosk-browser": "^0.0.8"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "PORT=5000 react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"

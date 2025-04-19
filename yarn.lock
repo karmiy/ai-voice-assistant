@@ -1640,6 +1640,13 @@
   dependencies:
     commander "^9.2.0"
 
+"@picovoice/web-voice-processor@^4.0.9":
+  version "4.0.9"
+  resolved "https://registry.yarnpkg.com/@picovoice/web-voice-processor/-/web-voice-processor-4.0.9.tgz#23aabbc85a0290546df5b8cdb0ca3b44707106ac"
+  integrity sha512-20pdkFjtuiojAdLIkNHXt4YgpRnlUePFW+gfkeCb+J+2XTRDGOI50+aJzL95p6QjDzGXsO7PZhlz7yDofOvZtg==
+  dependencies:
+    "@picovoice/web-utils" "=1.3.1"
+
 "@pkgjs/parseargs@^0.11.0":
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"

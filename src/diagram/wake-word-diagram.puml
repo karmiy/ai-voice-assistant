@@ -1,0 +1,105 @@
+@startuml 唤醒词检测系统
+
+' 定义组件
+package "音频捕获" {
+  [麦克风硬件] as Mic #LightBlue
+  [浏览器API] as BrowserAPI #LightBlue
+}
+
+package "音频处理" {
+  [micVoiceProcessor] as MVP #LightGreen
+  
+  note bottom of MVP
+    1. 获取和处理麦克风音频流
+    2. 将音频数据分发给订阅者
+    3. 管理音频流生命周期
+  end note
+}
+
+package "唤醒词系统" {
+  [WakeWordManager] as WWM #Pink
+  [WakeWordModel] as WWModel #Pink
+  [Porcupine] as Porcupine #Pink
+  
+  note bottom of WWM
+    1. 管理唤醒词检测的启动/停止
+    2. 创建WakeWordModel实例
+    3. 订阅音频流
+  end note
+  
+  note bottom of WWModel
+    1. 加载Porcupine模型
+    2. 配置唤醒词和灵敏度
+    3. 处理唤醒词检测回调
+  end note
+  
+  note bottom of Porcupine
+    1. Picovoice唤醒词检测引擎
+    2. 分析音频流识别关键词
+    3. 检测到关键词时触发回调
+  end note
+}
+
+[应用程序] as App #Yellow
+
+' 数据流向和交互
+Mic --> BrowserAPI : 1. 提供原始音频信号
+BrowserAPI --> MVP : 2. 提供MediaStream音频流
+App --> WWM : 3. 调用start(options)启动唤醒词检测
+WWM --> WWModel : 4. 创建并初始化
+WWModel --> Porcupine : 5. 加载模型并配置参数
+WWM --> MVP : 6. 订阅音频流
+MVP --> Porcupine : 7. 传送音频数据
+Porcupine --> WWModel : 8. 检测到唤醒词时回调
+WWModel --> App : 9. 通过onWakeWord回调通知应用
+
+' 详细流程说明
+note as N1
+  **唤醒词启动流程**:
+  
+  应用程序调用:
+  wakeWordManager.start({
+    accessKey: "您的Picovoice访问密钥",
+    sensitivity: 0.7,
+    onWakeWord: (keyword) => {
+      // 处理唤醒事件
+    }
+  })
+end note
+App .. N1
+WWM .. N1
+
+note as N2
+  **WakeWordModel配置**:
+  
+  1. 默认使用"Okay Google"作为唤醒词
+  2. 可通过testWakeWord参数切换不同唤醒词
+  3. sensitivity参数控制检测灵敏度(0.0-1.0)
+  4. 支持多种内置唤醒词(Alexa、Hey Siri等)
+end note
+WWModel .. N2
+
+note as N3
+  **音频处理流程**:
+  
+  1. micVoiceProcessor获取16kHz单声道音频
+  2. 音频转换为Int16Array格式
+  3. Porcupine处理每个音频帧(通常512样本)
+  4. 使用滑动窗口技术提高检测率
+end note
+MVP .. N3
+Porcupine .. N3
+
+note as N4
+  **停止唤醒词检测**:
+  
+  应用程序调用:
+  wakeWordManager.stop()
+  
+  1. 取消订阅音频流
+  2. 释放Porcupine模型资源
+  3. 清除WakeWordModel实例
+end note
+WWM .. N4
+
+@enduml

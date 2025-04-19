@@ -25,7 +25,7 @@ const StyledButton = styled(Button)`
 
 const ResultContainer = styled.div`
   width: 100%;
-  margin: 16px auto 0;
+  margin: 16px auto;
   border: 1px solid #aaaaaa;
   padding: 1rem;
   resize: vertical;
@@ -118,17 +118,17 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
   const [utterances, setUtterances] = useState<Result[]>([]);
   const [partial, setPartial] = useState("");
 
-  const stopRecognizer = () => {
+  const stop = () => {
     stopRef.current?.();
     setIsRecognizing(false);
   }
 
-  const startRecognizer = async (language: SUPPORTED_LANGUAGES) => {
+  const start = async (language: SUPPORTED_LANGUAGES) => {
     setLoading(true);
     try {
-      stopRecognizer();
-      // const stop = await streamRecognizerManager.start({
-      const stop = await voiceRecognizerManager.start({
+      stop();
+      // const _stop = await streamRecognizerManager.start({
+      const _stop = await voiceRecognizerManager.start({
         language,
         onResult: (result) => {
           setUtterances((utt) => [...utt, result]);
@@ -137,7 +137,7 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
           setPartial(partialResult);
         }
       })
-      stopRef.current = stop;
+      stopRef.current = _stop;
       setIsRecognizing(true);
     } catch (error) {
       console.error('Failed to load model:', error);
@@ -157,7 +157,7 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
           }}
           defaultValue={SUPPORTED_LANGUAGES.EN}
           onChange={(value: SUPPORTED_LANGUAGES) => {
-            stopRecognizer();
+            stop();
             setModel(value);
           }}
         >
@@ -167,7 +167,7 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
             </Option>
           ))}
         </Select>
-        <StyledButton disabled={loading} onClick={() => isRecognizing ? stopRecognizer() : startRecognizer(model)}>
+        <StyledButton disabled={loading} onClick={() => isRecognizing ? stop() : start(model)}>
           {loading ? "Loading..." : isRecognizing ? "Stop" : "Start "}
         </StyledButton>
       </ActionWrapper>

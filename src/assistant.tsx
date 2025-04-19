@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 // import FileUpload from "./file-upload";
 import RecognizerModelLoader from "./recognizerModelLoader";
-
+import WakeWordModelLoader from "./wakeWordModelLoader";
 const Wrapper = styled.div`
   width: 80%;
   text-align: left;
@@ -17,6 +17,7 @@ export const Assistant: React.FunctionComponent = () => {
   return (
     <Wrapper>
       <RecognizerModelLoader />
+      <WakeWordModelLoader />
       {/* <Header>
         <Microphone loading={loading} ready={ready} />
       </Header> */}

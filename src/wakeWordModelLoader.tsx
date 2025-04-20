@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { BuiltInKeyword } from '@picovoice/porcupine-web';
 import { wakeWordManager } from "./wakeWord";
+import { WAKE_WORD_ACCESS_TOKEN, CUSTOM_WAKE_WORD } from "./wakeWord/constants";
 const { Option } = Select;
 
 const Wrapper = styled.div`
@@ -71,8 +72,9 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
     try {
       stop();
       await wakeWordManager.start({
-        accessKey: 'EQrqvHg8Yy8PJbGg3p4K+rpgmyYQiwujuKbsPRaVcI+qCw2kLuGQJw==',
+        accessKey: WAKE_WORD_ACCESS_TOKEN,
         wakeWord,
+        customWakeWord: CUSTOM_WAKE_WORD.HEY_RING_BUDDY,
         onWakeWord: (keyword: string) => {
           console.log('keyword', keyword);
           setDetectedInfo({
@@ -83,7 +85,7 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
         // onError: (error: Error) => {
         //   console.error('error', error);
         // },
-        // sensitivity: 0.5,
+        // sensitivity: 0.5, // 0~1，数值越高越敏感越容易触发，但误触发率也高
       })
       setIsListening(true);
     } catch (error) {

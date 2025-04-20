@@ -1,19 +1,13 @@
-import { BuiltInKeyword } from '@picovoice/porcupine-web';
-
-export enum SUPPORTED_WAKE_WORDS {
-  ALEXA = BuiltInKeyword.Alexa,
-  AMERICANO = BuiltInKeyword.Americano,
-  BLUEBERRY = BuiltInKeyword.Blueberry,
-  BUMBLEBEE = BuiltInKeyword.Bumblebee,
-  COMPUTER = BuiltInKeyword.Computer,
-  GRAPEFRUIT = BuiltInKeyword.Grapefruit,
-  GRASSHOPPER = BuiltInKeyword.Grasshopper,
-  HEY_GOOGLE = BuiltInKeyword.HeyGoogle,
-  HEY_SIRI = BuiltInKeyword.HeySiri,
-  JARVIS = BuiltInKeyword.Jarvis,
-  OKAY_GOOGLE = BuiltInKeyword.OkayGoogle,
-  PICOVOCY = BuiltInKeyword.Picovoice,
-  PORCUPINE = BuiltInKeyword.Porcupine,
-  TERMINATOR = BuiltInKeyword.Terminator,
-  // HEY_RING_BUDDY = 'Hey Ring Buddy',
+export enum CUSTOM_WAKE_WORD {
+  HEY_RING_BUDDY = 'Hey Ring Buddy',
 }
+
+export const CUSTOM_WAKE_WORD_MODELS = [
+  {
+    publicPath: `${process.env.PUBLIC_URL}/models/Hey-Ring-Buddy_en_wasm_v3_0_0.ppn`,
+    label: 'Hey Ring Buddy',
+  },
+]
+
+export const WAKE_WORD_ACCESS_TOKEN = 'S/13zub9e8igLgB3XYEsCCYjNhGBh+Px2uR9nwQ04tZfxRYvhEpmcg=='; // windows
+// export const WAKE_WORD_ACCESS_TOKEN = 'EQrqvHg8Yy8PJbGg3p4K+rpgmyYQiwujuKbsPRaVcI+qCw2kLuGQJw=='; // mac

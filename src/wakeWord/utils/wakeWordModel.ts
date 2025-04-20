@@ -1,5 +1,5 @@
-import { Porcupine, BuiltInKeyword, PorcupineErrors } from '@picovoice/porcupine-web';
-import { SUPPORTED_WAKE_WORDS } from '../constants';
+import { Porcupine, BuiltInKeyword, PorcupineErrors, PorcupineKeyword } from '@picovoice/porcupine-web';
+import { CUSTOM_WAKE_WORD, CUSTOM_WAKE_WORD_MODELS } from '../constants';
 import context from '../../context';
 
 const logger = context.logger.tags('[WakeWordModel]');
@@ -7,6 +7,7 @@ const logger = context.logger.tags('[WakeWordModel]');
 export interface WakeWordModelOptions {
   accessKey: string;
   wakeWord: BuiltInKeyword;
+  customWakeWord?: CUSTOM_WAKE_WORD;
   onWakeWord?: (keyword: string) => void;
   onError?: (error: Error) => void;
   sensitivity?: number;
@@ -46,13 +47,23 @@ export class WakeWordModel {
       
       const baseUrl = process.env.PUBLIC_URL || '';
       const modelUrl = `${baseUrl}/models/porcupine_params.pv`;
-      
-      this._currentModel = await Porcupine.create(
-        this._options.accessKey,
+      const keywords: PorcupineKeyword[] = [
         {
           builtin: this._options.wakeWord, 
           sensitivity: this._options.sensitivity
         },
+      ];
+      if (this._options.customWakeWord) {
+        const customWakeWordModel = CUSTOM_WAKE_WORD_MODELS.find(model => model.label === this._options.customWakeWord);
+        customWakeWordModel && keywords.push({
+          publicPath: customWakeWordModel.publicPath,
+          label: customWakeWordModel.label,
+          sensitivity: this._options.sensitivity,
+        });
+      }
+      this._currentModel = await Porcupine.create(
+        this._options.accessKey,
+        keywords,
         keywordDetectionCallback,
         {
           publicPath: modelUrl,

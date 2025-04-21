@@ -71,7 +71,11 @@ class VoiceRecognizerManager {
     const engine = {
       onmessage: (e: MessageEvent) => {
         const inputFrame = e.data.inputFrame;
-        recognizer?.acceptWaveform(this._int16ArrayToAudioBuffer(inputFrame));
+        const audioBuffer = this._int16ArrayToAudioBuffer(inputFrame);
+        const buffer = audioBuffer.getChannelData(0);
+        if (buffer.byteLength > 0) {
+          recognizer?.acceptWaveform(audioBuffer);
+        }
       },
     };
     micVoiceProcessor.subscribe(engine);

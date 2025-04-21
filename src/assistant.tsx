@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 // import FileUpload from "./file-upload";
+import Microphone from "./microphone";
 import RecognizerModelLoader from "./recognizerModelLoader";
 import WakeWordModelLoader from "./wakeWordModelLoader";
 const Wrapper = styled.div`
@@ -16,6 +17,7 @@ const Wrapper = styled.div`
 export const Assistant: React.FunctionComponent = () => {
   return (
     <Wrapper>
+      <Microphone />
       <RecognizerModelLoader />
       <WakeWordModelLoader />
       {/* <Header>

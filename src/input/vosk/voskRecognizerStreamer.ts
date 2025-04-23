@@ -1,7 +1,7 @@
 import { Duplex, DuplexOptions } from 'readable-stream';
 import { KaldiRecognizer } from 'vosk-browser';
 
-export class RecognizerStreamer extends Duplex {
+export class VoskRecognizerStreamer extends Duplex {
   constructor(public recognizer: KaldiRecognizer, options?: DuplexOptions) {
     super(options);
   }

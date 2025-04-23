@@ -1,28 +1,28 @@
 import {
-  RecognizerStreamer,
-  RecognizerModel,
-  RecognizerModelOptions,
-} from '../utils';
+  VoskModel,
+  VoskModelOptions,
+} from './voskModel';
+import { VoskRecognizerStreamer } from './voskRecognizerStreamer';
 import { micStreamProcessor } from '../../shared';
 import { SUPPORTED_LANGUAGES } from '../constants';
 import context from '../../context';
 
-const logger = context.logger.tags('[StreamRecognizerManager]');
+const logger = context.logger.tags('[VoskRecognizerManager]');
 
-type RecognizerOptions = RecognizerModelOptions & {
+type VoskRecognizerOptions = VoskModelOptions & {
   language: SUPPORTED_LANGUAGES;
 };
 
-class StreamRecognizerManager {
-  private _streamers = new Map<SUPPORTED_LANGUAGES, RecognizerStreamer>();
-  private _subscribers = new Map<SUPPORTED_LANGUAGES, Set<RecognizerOptions>>();
+class VoskRecognizerManager {
+  private _streamers = new Map<SUPPORTED_LANGUAGES, VoskRecognizerStreamer>();
+  private _subscribers = new Map<SUPPORTED_LANGUAGES, Set<VoskRecognizerOptions>>();
 
   private async _getOrCreateRecognizerStreamer(language: SUPPORTED_LANGUAGES) {
     const currentStreamer = this._streamers.get(language);
     if (currentStreamer) {
       return currentStreamer;
     }
-    const model = new RecognizerModel({
+    const model = new VoskModel({
       onError: (error) => {
         logger.error('Recognizer error', {
           error,
@@ -55,7 +55,7 @@ class StreamRecognizerManager {
     if (!recognizer) {
       throw new Error('Failed to load recognizer');
     }
-    const streamer = new RecognizerStreamer(recognizer, {
+    const streamer = new VoskRecognizerStreamer(recognizer, {
       objectMode: true,
     });
     micStreamProcessor.subscribe(streamer);
@@ -63,7 +63,7 @@ class StreamRecognizerManager {
     return streamer;
   }
 
-  async start(options: RecognizerOptions) {
+  async start(options: VoskRecognizerOptions) {
     const { language } = options;
     const subscribers = this._subscribers.get(language) ?? new Set();
     subscribers.add(options);
@@ -88,4 +88,4 @@ class StreamRecognizerManager {
   }
 }
 
-export const streamRecognizerManager = new StreamRecognizerManager();
+export const voskRecognizerManager = new VoskRecognizerManager();

@@ -1,9 +1,8 @@
 import { createModel, KaldiRecognizer, Model } from 'vosk-browser';
-// import { assetsPublicPath } from '@ui_common/helper/assetsConstants';
 import { SUPPORTED_LANGUAGES } from '../constants';
 import context from '../../context';
 
-const logger = context.logger.tags('[RecognizerModel]');
+const logger = context.logger.tags('[VoskModel]');
 
 const MODELS = [
   {
@@ -50,32 +49,32 @@ export interface ServerMessagePartialResult {
   };
 }
 
-export interface RecognizerModelOptions {
+export interface VoskModelOptions {
   onError?: (error: Error) => void;
   onResult?: (result: Result) => void; // 一段话结束了触发
   onPartialResult?: (partial: string) => void; // 实时触发，即使没文本
 }
 
-export type RecognizerMessage =
+export type VoskRecognizerMessage =
   | ServerMessagePartialResult
   | ServerMessageResult
   | ServerMessageError;
 
-export class RecognizerModel {
+export class VoskModel {
   private _currentModel: Model | null = null;
   private _currentRecognizer: KaldiRecognizer | null = null;
   private _currentLanguage: SUPPORTED_LANGUAGES | null = null;
 
-  constructor(private _options: RecognizerModelOptions = {}) {}
+  constructor(private _options: VoskModelOptions = {}) {}
 
-  private _handleResult = (message: RecognizerMessage) => {
+  private _handleResult = (message: VoskRecognizerMessage) => {
     if (message.event === 'result') {
       const result = message.result;
       this._options.onResult?.(result);
     }
   };
 
-  private _handlePartialResult = (message: RecognizerMessage) => {
+  private _handlePartialResult = (message: VoskRecognizerMessage) => {
     if (message.event === 'partialresult') {
       const partial = message.result.partial;
       this._options.onPartialResult?.(partial);
@@ -100,7 +99,6 @@ export class RecognizerModel {
       }
       const baseUrl = process.env.PUBLIC_URL || '';
       const modelUrl = `${baseUrl}/models/${model.path}`;
-      // const modelUrl = `${assetsPublicPath}/vosk/${model.path}`;
 
       // Create new model
       this._currentModel = await createModel(modelUrl);

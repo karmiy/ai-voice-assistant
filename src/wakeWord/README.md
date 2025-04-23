@@ -1,7 +1,3 @@
-## microphone -> 唤醒词
+# Wake Word
 
-wakeWordManager
-
-```
-见 wake-word-diagram.puml 流程图
-```
+porcupineManager = `@picovoice/porcupine-web` + `@picovoice/web-voice-processor`

@@ -2,8 +2,7 @@ import { Button, Select } from "antd";
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { SUPPORTED_LANGUAGES } from "./input/constants";
-import { streamRecognizerManager, voiceRecognizerManager } from "./input";
-import { Result } from "./input/utils";
+import { voskRecognizerManager, Result } from "./input";
 const { Option } = Select;
 
 const Wrapper = styled.div`
@@ -127,8 +126,7 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
     setLoading(true);
     try {
       stop();
-      // const _stop = await streamRecognizerManager.start({
-      const _stop = await voiceRecognizerManager.start({
+      const _stop = await voskRecognizerManager.start({
         language,
         onResult: (result) => {
           setUtterances((utt) => [...utt, result]);

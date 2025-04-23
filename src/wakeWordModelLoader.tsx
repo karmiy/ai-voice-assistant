@@ -2,8 +2,7 @@ import { Button, Select } from "antd";
 import React, { useState } from "react";
 import styled from "styled-components";
 import { BuiltInKeyword } from '@picovoice/porcupine-web';
-import { wakeWordManager } from "./wakeWord";
-import { WAKE_WORD_ACCESS_TOKEN, CUSTOM_WAKE_WORD } from "./wakeWord/constants";
+import { porcupineManager, PORCUPINE_ACCESS_TOKEN, CUSTOM_WAKE_WORD } from "./wakeWord";
 const { Option } = Select;
 
 const Wrapper = styled.div`
@@ -53,7 +52,7 @@ export const wakeWords = [
   BuiltInKeyword.Terminator,
 ];
 
-const RecognizerModelLoader: React.FunctionComponent = () => {
+const WakeWordModelLoader: React.FunctionComponent = () => {
   const [loading, setLoading] = useState(false);
   const [wakeWord, setWakeWord] = useState(BuiltInKeyword.HeySiri);
   const [isListening, setIsListening] = useState(false);
@@ -63,7 +62,7 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
   });
 
   const stop = () => {
-    wakeWordManager.stop();
+    porcupineManager.stop();
     setIsListening(false);
   }
 
@@ -71,8 +70,8 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
     setLoading(true);
     try {
       stop();
-      await wakeWordManager.start({
-        accessKey: WAKE_WORD_ACCESS_TOKEN,
+      await porcupineManager.start({
+        accessKey: PORCUPINE_ACCESS_TOKEN,
         wakeWord,
         customWakeWord: CUSTOM_WAKE_WORD.HEY_RING_BUDDY,
         onWakeWord: (keyword: string) => {
@@ -128,4 +127,4 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
   );
 };
 
-export default RecognizerModelLoader;
+export default WakeWordModelLoader;

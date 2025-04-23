@@ -2,6 +2,7 @@
     "words": [
         "vosk",
         "Kaldi",
-        "partialresult"
+        "partialresult",
+        "deepgram"
     ]
 }

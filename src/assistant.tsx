@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 // import FileUpload from "./file-upload";
 // import Microphone from "./microphone";
-import RecognizerModelLoader from "./recognizerModelLoader";
-import WakeWordModelLoader from "./wakeWordModelLoader";
+import VoskRecognizer from "./voskRecognizer";
+import DeepgramRecognizer from "./deepgramRecognizer";
+import PorcupineWakeWord from "./porcupineWakeWord";
 const Wrapper = styled.div`
   width: 80%;
   text-align: left;
@@ -18,8 +19,9 @@ export const Assistant: React.FunctionComponent = () => {
   return (
     <Wrapper>
       {/* <Microphone /> */}
-      <RecognizerModelLoader />
-      <WakeWordModelLoader />
+      <VoskRecognizer />
+      <DeepgramRecognizer />
+      <PorcupineWakeWord />
       {/* <Header>
         <Microphone loading={loading} ready={ready} />
       </Header> */}

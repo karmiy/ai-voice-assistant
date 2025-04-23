@@ -5,6 +5,7 @@
   "homepage": "https://ccoreilly.github.io/vosk-browser",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@deepgram/sdk": "^3.12.1",
     "@picovoice/porcupine-web": "3.0.3",
     "@picovoice/web-voice-processor": "^4.0.9",
     "@types/node": "^18.7.15",

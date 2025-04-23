@@ -1,12 +1,12 @@
 import { createModel, KaldiRecognizer, Model } from 'vosk-browser';
-import { SUPPORTED_LANGUAGES } from '../constants';
+import { VOSK_SUPPORTED_LANGUAGES } from './constants';
 import context from '../../context';
 
 const logger = context.logger.tags('[VoskModel]');
 
 const MODELS = [
   {
-    language: SUPPORTED_LANGUAGES.EN,
+    language: VOSK_SUPPORTED_LANGUAGES.EN,
     path: 'vosk-model-small-en-us-0.15.tar.gz',
   },
 ];
@@ -63,7 +63,7 @@ export type VoskRecognizerMessage =
 export class VoskModel {
   private _currentModel: Model | null = null;
   private _currentRecognizer: KaldiRecognizer | null = null;
-  private _currentLanguage: SUPPORTED_LANGUAGES | null = null;
+  private _currentLanguage: VOSK_SUPPORTED_LANGUAGES | null = null;
 
   constructor(private _options: VoskModelOptions = {}) {}
 
@@ -81,7 +81,7 @@ export class VoskModel {
     }
   };
 
-  async load(language: SUPPORTED_LANGUAGES) {
+  async load(language: VOSK_SUPPORTED_LANGUAGES) {
     try {
       // If it's the same model, return current recognizer directly
       if (this._currentLanguage === language && this._currentRecognizer) {

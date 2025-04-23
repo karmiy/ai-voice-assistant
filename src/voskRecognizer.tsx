@@ -1,8 +1,7 @@
 import { Button, Select } from "antd";
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { SUPPORTED_LANGUAGES } from "./input/constants";
-import { voskRecognizerManager, Result } from "./input";
+import { voskRecognizerManager, Result, VOSK_SUPPORTED_LANGUAGES } from "./input";
 const { Option } = Select;
 
 const Wrapper = styled.div`
@@ -43,10 +42,10 @@ const Word = styled.span<{ confidence: number }>`
   white-space: normal;
 `;
 
-export const models: Array<{ name: string; language: SUPPORTED_LANGUAGES }> = [
+export const models: Array<{ name: string; language: VOSK_SUPPORTED_LANGUAGES }> = [
   {
     name: "English",
-    language: SUPPORTED_LANGUAGES.EN,
+    language: VOSK_SUPPORTED_LANGUAGES.EN,
   },
 ];
 // export const models: Array<{ name: string; path: string }> = [
@@ -109,9 +108,9 @@ export const models: Array<{ name: string; language: SUPPORTED_LANGUAGES }> = [
 //   },
 // ];
 
-const RecognizerModelLoader: React.FunctionComponent = () => {
+const VoskRecognizerModelLoader: React.FunctionComponent = () => {
   const [loading, setLoading] = useState(false);
-  const [model, setModel] = useState(SUPPORTED_LANGUAGES.EN);
+  const [model, setModel] = useState(VOSK_SUPPORTED_LANGUAGES.EN);
   const stopRef = useRef<Function>();
   const [isRecognizing, setIsRecognizing] = useState(false);
   const [utterances, setUtterances] = useState<Result[]>([]);
@@ -122,7 +121,7 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
     setIsRecognizing(false);
   }
 
-  const start = async (language: SUPPORTED_LANGUAGES) => {
+  const start = async (language: VOSK_SUPPORTED_LANGUAGES) => {
     setLoading(true);
     try {
       stop();
@@ -153,8 +152,8 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
             margin: "auto 0",
             width: "10rem",
           }}
-          defaultValue={SUPPORTED_LANGUAGES.EN}
-          onChange={(value: SUPPORTED_LANGUAGES) => {
+          defaultValue={VOSK_SUPPORTED_LANGUAGES.EN}
+          onChange={(value: VOSK_SUPPORTED_LANGUAGES) => {
             stop();
             setModel(value);
           }}
@@ -191,4 +190,4 @@ const RecognizerModelLoader: React.FunctionComponent = () => {
   );
 };
 
-export default RecognizerModelLoader;
+export default VoskRecognizerModelLoader;

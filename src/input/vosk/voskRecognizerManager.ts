@@ -4,20 +4,20 @@ import {
 } from './voskModel';
 import { VoskRecognizerStreamer } from './voskRecognizerStreamer';
 import { micStreamProcessor } from '../../shared';
-import { SUPPORTED_LANGUAGES } from '../constants';
+import { VOSK_SUPPORTED_LANGUAGES } from './constants';
 import context from '../../context';
 
 const logger = context.logger.tags('[VoskRecognizerManager]');
 
 type VoskRecognizerOptions = VoskModelOptions & {
-  language: SUPPORTED_LANGUAGES;
+  language: VOSK_SUPPORTED_LANGUAGES;
 };
 
 class VoskRecognizerManager {
-  private _streamers = new Map<SUPPORTED_LANGUAGES, VoskRecognizerStreamer>();
-  private _subscribers = new Map<SUPPORTED_LANGUAGES, Set<VoskRecognizerOptions>>();
+  private _streamers = new Map<VOSK_SUPPORTED_LANGUAGES, VoskRecognizerStreamer>();
+  private _subscribers = new Map<VOSK_SUPPORTED_LANGUAGES, Set<VoskRecognizerOptions>>();
 
-  private async _getOrCreateRecognizerStreamer(language: SUPPORTED_LANGUAGES) {
+  private async _getOrCreateRecognizerStreamer(language: VOSK_SUPPORTED_LANGUAGES) {
     const currentStreamer = this._streamers.get(language);
     if (currentStreamer) {
       return currentStreamer;

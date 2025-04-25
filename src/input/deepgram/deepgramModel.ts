@@ -34,16 +34,21 @@ export interface DeepgramModelOptions {
   language?: string;
   onOpen?: () => void;
   onTranscript?: (transcript: string) => void;
+  onFinalTranscript?: (transcript: string) => void;
   onClose?: () => void;
   onError?: (error: any) => void;
 }
 
+const DETECT_TRANSCRIPT_END_TIMEOUT = 500;
 export class DeepgramModel {
   private _socket: ListenLiveClient | null = null;
 
   constructor(private _options: DeepgramModelOptions) {}
 
   private _isActive = false;
+
+  private _finalTranscripts: string[] = [];
+  private _detectTranscriptEndTimer: ReturnType<typeof setTimeout> | null = null;
 
   start() {
     if (this._isActive) {
@@ -70,6 +75,8 @@ export class DeepgramModel {
     this._socket?.disconnect();
     this._socket = null;
     this._isActive = false;
+    this._finalTranscripts = [];
+    this._clearDetectTranscriptEndTimer();
   }
 
   private _onOpen = () => {
@@ -86,6 +93,19 @@ export class DeepgramModel {
       data,
     });
     this._options.onTranscript?.(data.channel.alternatives[0].transcript);
+    if (!transcript) {
+      this._detectTranscriptEndTimer = setTimeout(() => {
+        if (this._finalTranscripts.some(item => item.length > 0)) {
+          this._options.onFinalTranscript?.(this._finalTranscripts.join(' '));
+          this._finalTranscripts = [];
+        }
+      }, DETECT_TRANSCRIPT_END_TIMEOUT);
+    } else {
+      this._clearDetectTranscriptEndTimer();
+    }
+    if (data.is_final) {
+      this._finalTranscripts.push(transcript);
+    }
   };
 
   private _onClose = () => {
@@ -97,6 +117,11 @@ export class DeepgramModel {
     logger.error('error', error);
     this._options.onError?.(error);
   };
+
+  private _clearDetectTranscriptEndTimer() {
+    this._detectTranscriptEndTimer && clearTimeout(this._detectTranscriptEndTimer);
+    this._detectTranscriptEndTimer = null;
+  }
 
   getCurrentSocket() {
     return this._socket;

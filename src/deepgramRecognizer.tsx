@@ -2,7 +2,10 @@ import { Button, Select } from "antd";
 import React, { useState } from "react";
 import styled from "styled-components";
 import { deepgramRecognizerManager, DEEPGRAM_SUPPORTED_LANGUAGES, DEEPGRAM_API_KEY } from "./input";
+import context from './context';
 const { Option } = Select;
+
+const logger = context.logger.tags('[DeepgramRecognizer]');
 
 const Wrapper = styled.div`
   display: flex;
@@ -58,6 +61,9 @@ const DeepgramRecognizer: React.FunctionComponent = () => {
       await deepgramRecognizerManager.start({
         apiKey: DEEPGRAM_API_KEY,
         language,
+        onFinalTranscript: (transcript) => {
+          logger.info('final transcript', transcript);
+        }
       })
       setIsRecognizing(true);
     } catch (error) {

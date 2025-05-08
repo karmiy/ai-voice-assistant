@@ -7,6 +7,7 @@ import styled from "styled-components";
 import "./index.css";
 
 import { Assistant } from "./assistant";
+import { Customer } from "./customer";
 
 const Wrapper = styled.div`
   text-align: center;
@@ -21,7 +22,8 @@ ReactDOM.render(
       <p>
         Select a language and load the model to start speech recognition.
       </p>
-      <Assistant />
+      {/* <Assistant /> */}
+      <Customer />
     </Wrapper>
   </React.StrictMode>,
   document.getElementById("root")
